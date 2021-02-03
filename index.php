@@ -3,7 +3,7 @@
 <head>
   <script src="fabric.js"></script>
   <script src="face-api.js"></script>
-  <script src="js/commons.js"></script>
+  
   <script src="js/faceDetectionControls.js"></script>
   <script src="js/imageSelectionControls.js"></script>
   <link rel="stylesheet" href="styles.css">
@@ -12,16 +12,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 </head>
 <body>
-  <div id="navbar"></div>
   <div class="center-content page-container">
 
-    <div class="progress" id="loader">
-      <div class="indeterminate"></div>
-    </div>
     <div style="position: relative" class="margin">
-      <img id="inputImg" src="" style="max-width: 800px;" />
+      <canvas id="overlay"></canvas>
       <canvas id="canvas" style="border:1px solid"></canvas>
-      <canvas id="overlay" />
     </div>
 
     <div class="row side-by-side">
@@ -37,95 +32,23 @@
       >
         Ok
       </button>
+      <button
+        class="waves-effect waves-light btn"
+        onclick="applyFilter()"
+      >
+        Apply
+      </button>
+
       <input id="queryImgUploadInput" type="file" class="waves-effect btn bold" onchange="loadImageFromUpload()" accept=".jpg, .jpeg, .png">
       <!-- image_selection_control -->
     </div>
-
-    <div class="row side-by-side">
-
-      <!-- face_detector_selection_control -->
-      <div id="face_detector_selection_control" class="row input-field" style="margin-right: 20px;">
-        <select id="selectFaceDetector">
-          <option value="ssd_mobilenetv1">SSD Mobilenet V1</option>
-          <option value="tiny_face_detector">Tiny Face Detector</option>
-        </select>
-        <label>Select Face Detector</label>
-      </div>
-      <!-- face_detector_selection_control -->
-
-      <!-- check boxes -->
-      <div class="row" style="width: 220px;">
-        <input type="checkbox" id="hideBoundingBoxesCheckbox" onchange="onChangeHideBoundingBoxes(event)" />
-        <label for="hideBoundingBoxesCheckbox">Hide Bounding Boxes</label>
-      </div>
-      <!-- check boxes -->
-
-    </div>
-
-    <!-- ssd_mobilenetv1_controls -->
-    <span id="ssd_mobilenetv1_controls">
-      <div class="row side-by-side">
-        <div class="row">
-          <label for="minConfidence">Min Confidence:</label>
-          <input disabled value="0.5" id="minConfidence" type="text" class="bold">
-        </div>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onDecreaseMinConfidence()"
-        >
-          <i class="material-icons left">-</i>
-        </button>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onIncreaseMinConfidence()"
-        >
-          <i class="material-icons left">+</i>
-        </button>
-      </div>
-    </span>
-    <!-- ssd_mobilenetv1_controls -->
-
-    <!-- tiny_face_detector_controls -->
-    <span id="tiny_face_detector_controls">
-      <div class="row side-by-side">
-        <div class="row input-field" style="margin-right: 20px;">
-          <select id="inputSize">
-            <option value="" disabled selected>Input Size:</option>
-            <option value="160">160 x 160</option>
-            <option value="224">224 x 224</option>
-            <option value="320">320 x 320</option>
-            <option value="416">416 x 416</option>
-            <option value="512">512 x 512</option>
-            <option value="608">608 x 608</option>
-          </select>
-          <label>Input Size</label>
-        </div>
-        <div class="row">
-          <label for="scoreThreshold">Score Threshold:</label>
-          <input disabled value="0.5" id="scoreThreshold" type="text" class="bold">
-        </div>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onDecreaseScoreThreshold()"
-        >
-          <i class="material-icons left">-</i>
-        </button>
-        <button
-          class="waves-effect waves-light btn"
-          onclick="onIncreaseScoreThreshold()"
-        >
-          <i class="material-icons left">+</i>
-        </button>
-      </div>
-    </span>
-    <!-- tiny_face_detector_controls -->
-
+    <img id="inputImg" src="" style="max-width: 800px;visibility: hidden;" />
   </body>
 
   <script>
     let withBoxes = true
     var kanvas = new fabric.Canvas('canvas');
-
+    var scale = 1;
     function onChangeHideBoundingBoxes(e) {
       withBoxes = !$(e.target).prop('checked')
       updateResults()
@@ -149,7 +72,7 @@
 		var _h = canvas.height;
 		kanvas.setHeight(_h);
 		kanvas.setWidth(_w);
-		var scale = _w/inputImgEl.naturalWidth;
+		scale = _w/inputImgEl.naturalWidth;
 		var _img = null;
 		var imgElement = document.getElementById('inputImg');
 		var _img = new fabric.Image(imgElement, {
@@ -160,17 +83,56 @@
 		}).scale(scale);
 		kanvas.add(_img);
 		setTimeout(function(){
-          for (var i = 0; i < results[0].landmarks.positions.length; i++) {
+          console.log(results[0].landmarks.positions);
+          for (var i = 28; i < results[0].landmarks.positions.length; i++) {
           	var _x = results[0].landmarks.positions[i]._x;
           	var _y = results[0].landmarks.positions[i]._y;
             kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
           }
           kanvas.sendBackwards(_img);
+          fabric.Image.fromURL('eye2.png', function(oImg) { 
+            var eyescl = (results[0].landmarks.positions[21]._x - results[0].landmarks.positions[17]._x) / 80;
+            oImg.left = results[0].landmarks.positions[17]._x + 5*scale ;
+            oImg.top = results[0].landmarks.positions[17]._y - (oImg.height*eyescl) + 5*scale;
+            oImg.scale(eyescl);
+            oImg.clone(function(clone) {
+                kanvas.add(clone.set({
+                    left: results[0].landmarks.positions[22]._x + 5*scale,
+                    top: results[0].landmarks.positions[22]._y - (oImg.height*eyescl) + 5*scale
+                }));
+            });
+            oImg.set('flipX', true);
+            kanvas.add(oImg);
+          });
+
+          kanvas.on('object:selected', function(o){
+            var activeObj = o.target;
+            activeObj.set({'borderColor':'#f00','cornerColor':'#fbb802'});
+          });
         }, 500);
       //if (withBoxes) {
         //faceapi.draw.drawDetections(canvas, resizedResults)
       //}
       //faceapi.draw.drawFaceLandmarks(canvas, resizedResults)
+    }
+
+    function applyFilter(){
+      var ctx=kanvas.contextContainer.canvas.getContext('2d');
+      var imageData=ctx.getImageData(0,0,kanvas.width,kanvas.height);
+      invertColors(imageData.data, kanvas.width);
+      kanvas.contextContainer.putImageData(imageData, 0, 0);
+    }
+
+    var leng = 1000;
+    var step = 4;
+    var opa = 255;
+    function invertColors(data, width) {
+      for (var i = 0; i < width*step; i+= step) {
+        data[i] = 255; // Invert Red
+        data[i+1] = 0; // Invert Green
+        data[i+2] = 0; // Invert Blue
+        data[i+3] = opa;
+      }
     }
 
     async function run() {
@@ -179,13 +141,12 @@
       await faceapi.loadFaceLandmarkModel('/')
 
       // start processing image
-      updateResults()
+      //updateResults()
     }
 
     $(document).ready(function() {
-      renderNavBar('#navbar', 'face_landmark_detection')
-      initImageSelectionControls()
-      initFaceDetectionControls()
+      //initImageSelectionControls()
+      //initFaceDetectionControls()
       run()
     })
   </script>
