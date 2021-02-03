@@ -83,3 +83,7 @@ input[type="file"]::-webkit-file-upload-button {
     color: #fff;
     border-radius: .2em;
 }
+
+canvas {
+  cursor: default !important;
+}
