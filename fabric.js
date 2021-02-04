@@ -1,4 +1,3 @@
-/* build: `node build.js modules=ALL exclude=gestures,accessors requirejs minifier=uglifyjs` */
 /*! Fabric.js Copyright 2008-2015, Printio (Juriy Zaytsev, Maxim Chernyak) */
 
 var fabric = fabric || { version: '4.3.1' };
@@ -202,14 +201,10 @@ fabric.initFilterBackend = function() {
     return (new fabric.Canvas2dFilterBackend());
   }
 };
-
-
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {
   // ensure globality even if entire library were function wrapped (as in Meteor.js packaging system)
   window.fabric = fabric;
 }
-
-
 (function() {
 
   /**
@@ -329,8 +324,6 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
     off: off,
   };
 })();
-
-
 /**
  * @namespace fabric.Collection
  */
@@ -492,8 +485,6 @@ fabric.Collection = {
     }, 0);
   }
 };
-
-
 /**
  * @namespace fabric.CommonMethods
  */
@@ -588,8 +579,6 @@ fabric.CommonMethods = {
     return this[property];
   }
 };
-
-
 (function(global) {
 
   var sqrt = Math.sqrt,
@@ -1605,8 +1594,6 @@ fabric.CommonMethods = {
     }
   };
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function() {
   var _join = Array.prototype.join,
       commandLengths = {
@@ -2399,8 +2386,6 @@ fabric.CommonMethods = {
   fabric.util.getBoundsOfArc = getBoundsOfArc;
   fabric.util.drawArc = drawArc;
 })();
-
-
 (function() {
 
   var slice = Array.prototype.slice;
@@ -2495,8 +2480,6 @@ fabric.CommonMethods = {
   };
 
 })();
-
-
 (function() {
   /**
    * Copies all enumerable properties of one js object to another
@@ -2568,8 +2551,6 @@ fabric.CommonMethods = {
   };
   fabric.util.object.extend(fabric.util, fabric.Observable);
 })();
-
-
 (function() {
 
   /**
@@ -2680,8 +2661,6 @@ fabric.CommonMethods = {
     graphemeSplit: graphemeSplit
   };
 })();
-
-
 (function() {
 
   var slice = Array.prototype.slice, emptyFunction = function() { },
@@ -2797,8 +2776,6 @@ fabric.CommonMethods = {
 
   fabric.util.createClass = createClass;
 })();
-
-
 (function () {
   // since ie11 can use addEventListener but they do not support options, i need to check
   var couldUseAttachEvent = !!fabric.document.createElement('div').attachEvent,
@@ -2849,8 +2826,6 @@ fabric.CommonMethods = {
     return touchEvents.indexOf(event.type) > -1 || event.pointerType === 'touch';
   };
 })();
-
-
 (function () {
 
   /**
@@ -2921,8 +2896,6 @@ fabric.CommonMethods = {
   fabric.util.setStyle = setStyle;
 
 })();
-
-
 (function() {
 
   var _slice = Array.prototype.slice;
@@ -3223,8 +3196,6 @@ fabric.CommonMethods = {
   fabric.util.cleanUpJsdomNode = cleanUpJsdomNode;
 
 })();
-
-
 (function() {
 
   function addParamToUrl(url, param) {
@@ -3279,8 +3250,6 @@ fabric.CommonMethods = {
 
   fabric.util.request = request;
 })();
-
-
 /**
  * Wrapper around `console.log` (when available)
  * @param {*} [values] Values to log
@@ -3292,8 +3261,6 @@ fabric.log = console.log;
  * @param {*} [values] Values to log as a warning
  */
 fabric.warn = console.warn;
-
-
 (function() {
 
   function noop() {
@@ -3390,8 +3357,6 @@ fabric.warn = console.warn;
   fabric.util.requestAnimFrame = requestAnimFrame;
   fabric.util.cancelAnimFrame = cancelAnimFrame;
 })();
-
-
 (function() {
   // Calculate an in-between color. Returns a "rgba()" string.
   // Credit: Edwin Martin <edwin@bitstorm.org>
@@ -3465,8 +3430,6 @@ fabric.warn = console.warn;
   fabric.util.animateColor = animateColor;
 
 })();
-
-
 (function() {
 
   function normalize(a, c, p, s) {
@@ -3865,8 +3828,6 @@ fabric.warn = console.warn;
   };
 
 })();
-
-
 (function(global) {
 
   'use strict';
@@ -4943,8 +4904,6 @@ fabric.warn = console.warn;
   });
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 fabric.ElementsParser = function(elements, callback, options, reviver, parsingOptions, doc) {
   this.elements = elements;
   this.callback = callback;
@@ -5097,8 +5056,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     }
   };
 })(fabric.ElementsParser.prototype);
-
-
 (function(global) {
 
   'use strict';
@@ -5436,8 +5393,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -5610,8 +5565,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -6248,8 +6201,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -6492,7 +6443,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
    * @return {Boolean} true if one flip, but not two.
    */
   function targetHasOneFlip(target) {
-    return (target.flipX && !target.flipY) || (!target.flipX && target.flipY);
+    return target.flipX !== target.flipY;
   }
 
   /**
@@ -6987,8 +6938,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   fabric.controlsUtils = controls;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -7088,8 +7037,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   controls.renderSquareControl = renderSquareControl;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -7429,8 +7376,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function() {
 
   /* _FROM_SVG_START_ */
@@ -7921,8 +7866,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     });
   }
 })();
-
-
 (function() {
 
   'use strict';
@@ -8112,8 +8055,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     }
   });
 })();
-
-
 (function(global) {
 
   'use strict';
@@ -8309,8 +8250,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
   fabric.Shadow.reOffsetsAndBlur = /(?:\s|^)(-?\d+(?:px)?(?:\s?|$))?(-?\d+(?:px)?(?:\s?|$))?(\d+(?:px)?)?(?:\s?|$)(?:$|\s)/;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function () {
 
   'use strict';
@@ -10166,8 +10105,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     };
   }
 })();
-
-
 /**
  * BaseBrush class
  * @class fabric.BaseBrush
@@ -10292,8 +10229,6 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
     ctx.shadowBlur = ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
   }
 });
-
-
 (function() {
   /**
    * PencilBrush class
@@ -10587,8 +10522,6 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
     }
   });
 })();
-
-
 /**
  * CircleBrush class
  * @class fabric.CircleBrush
@@ -10730,8 +10663,6 @@ fabric.CircleBrush = fabric.util.createClass(fabric.BaseBrush, /** @lends fabric
     return pointerPoint;
   }
 });
-
-
 /**
  * SprayBrush class
  * @class fabric.SprayBrush
@@ -10948,8 +10879,6 @@ fabric.SprayBrush = fabric.util.createClass( fabric.BaseBrush, /** @lends fabric
     this.sprayChunks.push(this.sprayChunkPoints);
   }
 });
-
-
 /**
  * PatternBrush class
  * @class fabric.PatternBrush
@@ -11009,8 +10938,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     return path;
   }
 });
-
-
 (function() {
 
   var getPointer = fabric.util.getPointer,
@@ -12328,8 +12255,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     }
   }
 })();
-
-
 (function() {
 
   var addListener = fabric.util.addListener,
@@ -13335,8 +13260,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     }
   });
 })();
-
-
 (function() {
 
   var min = Math.min,
@@ -13514,8 +13437,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
   });
 
 })();
-
-
 (function () {
   fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.StaticCanvas.prototype */ {
 
@@ -13613,8 +13534,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
   });
 
 })();
-
-
 fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.StaticCanvas.prototype */ {
   /**
    * Populates canvas with data from the specified JSON.
@@ -13843,8 +13762,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     }
   }
 });
-
-
 (function(global) {
 
   'use strict';
@@ -15807,8 +15724,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    */
   fabric.Object.__uid = 0;
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function() {
 
   var degreesToRadians = fabric.util.degreesToRadians,
@@ -16064,8 +15979,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
   });
 
 })();
-
-
 (function() {
 
   function arrayFromCoords(coords) {
@@ -16779,8 +16692,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     },
   });
 })();
-
-
 fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prototype */ {
 
   /**
@@ -16861,8 +16772,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     return this;
   }
 });
-
-
 /* _TO_SVG_START_ */
 (function() {
   function getSvgColorString(prop, value) {
@@ -17121,8 +17030,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   });
 })();
 /* _TO_SVG_END_ */
-
-
 (function() {
 
   var extend = fabric.util.object.extend,
@@ -17230,8 +17137,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     }
   });
 })();
-
-
 (function() {
 
   var degreesToRadians = fabric.util.degreesToRadians;
@@ -17535,8 +17440,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     }
   });
 })();
-
-
 fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.StaticCanvas.prototype */ {
 
   /**
@@ -17773,8 +17676,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     }
   }
 });
-
-
 (function(global) {
 
   'use strict';
@@ -18115,8 +18016,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   }
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -18324,8 +18223,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -18434,8 +18331,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -18617,8 +18512,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -18824,8 +18717,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -19085,8 +18976,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -19167,8 +19056,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -19549,8 +19436,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   /* _FROM_SVG_END_ */
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -20142,8 +20027,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -20299,8 +20182,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -21074,8 +20955,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   /* _FROM_SVG_END_ */
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prototype */ {
 
   /**
@@ -21161,8 +21040,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     return this;
   }
 });
-
-
 (function() {
 
   'use strict';
@@ -21558,8 +21435,6 @@ function copyGLTo2DPutImageData(gl, pipelineState) {
   var imgData = new ImageData(u8Clamped, dWidth, dHeight);
   ctx.putImageData(imgData, 0, 0);
 }
-
-
 (function() {
 
   'use strict';
@@ -21625,8 +21500,6 @@ function copyGLTo2DPutImageData(gl, pipelineState) {
 
   };
 })();
-
-
 /**
  * @namespace fabric.Image.filters
  * @memberOf fabric.Image
@@ -21989,8 +21862,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   callback && callback(filter);
   return filter;
 };
-
-
 (function(global) {
 
   'use strict';
@@ -22148,8 +22019,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
    */
   fabric.Image.filters.ColorMatrix.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -22263,8 +22132,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Brightness.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -22617,8 +22484,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Convolute.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -22773,8 +22638,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Grayscale.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -22886,8 +22749,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
 
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -23022,8 +22883,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Noise.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -23161,8 +23020,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Pixelate.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -23336,8 +23193,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.RemoveColor.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -23423,8 +23278,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     fabric.Image.filters[key].fromObject = fabric.Image.filters.BaseFilter.fromObject;
   }
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
   'use strict';
 
@@ -23670,8 +23523,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.BlendColor.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
   'use strict';
 
@@ -23918,8 +23769,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   };
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -24410,8 +24259,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Resize.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -24525,8 +24372,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Contrast.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -24638,8 +24483,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Saturation.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -24855,8 +24698,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   filters.Blur.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -24993,8 +24834,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.Gamma.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -25067,8 +24906,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     return instance;
   };
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -25176,8 +25013,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.Image.filters.HueRotation.fromObject = fabric.Image.filters.BaseFilter.fromObject;
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function(global) {
 
   'use strict';
@@ -26762,8 +26597,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   fabric.util.createAccessors && fabric.util.createAccessors(fabric.Text);
 
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function() {
   fabric.util.object.extend(fabric.Text.prototype, /** @lends fabric.Text.prototype */ {
     /**
@@ -27088,8 +26921,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     }
   });
 })();
-
-
 (function() {
 
   function parseDecoration(object) {
@@ -27601,8 +27432,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     fabric.Object._fromObject('IText', object, callback, 'text');
   };
 })();
-
-
 (function() {
 
   var clone = fabric.util.object.clone;
@@ -28534,8 +28363,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     }
   });
 })();
-
-
 fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.prototype */ {
   /**
    * Initializes "dbclick" event handler
@@ -28808,8 +28635,6 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
     return newSelectionStart;
   }
 });
-
-
 fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.prototype */ {
 
   /**
@@ -29484,8 +29309,6 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   },
 
 });
-
-
 /* _TO_SVG_START_ */
 (function() {
   var toFixed = fabric.util.toFixed,
@@ -29727,8 +29550,6 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
   });
 })();
 /* _TO_SVG_END_ */
-
-
 (function(global) {
 
   'use strict';
@@ -30187,8 +30008,6 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
     return fabric.Object._fromObject('Textbox', object, callback, 'text');
   };
 })(typeof exports !== 'undefined' ? exports : this);
-
-
 (function() {
 
   var controlsUtils = fabric.controlsUtils,
@@ -30303,4 +30122,3 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
     });
   }
 })();
-

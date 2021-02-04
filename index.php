@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="fabric.js"></script>
+  <script src="fabric2.js"></script>
   <script src="face-api.js"></script>
   
   <script src="js/faceDetectionControls.js"></script>
@@ -50,6 +50,7 @@
     let withBoxes = true
     var kanvas = new fabric.Canvas('canvas');
     var scale = 1;
+    var scaleMatrix = 1;
     var boundeye = [
     	{x: -14, y: 15},
     	{x: -11.5, y: -7},
@@ -85,8 +86,16 @@
 		var _h = canvas.height;
 		kanvas.setHeight(_h);
 		kanvas.setWidth(_w);
+    if(inputImgEl.naturalWidth < 1023)
+      scaleMatrix = inputImgEl.naturalWidth/1023;
+
+    for (var i = 0; i < boundeye.length; i++) {
+      boundeye[i].x *= scaleMatrix;
+      boundeye[i].y *= scaleMatrix;
+    }
+
 		scale = _w/inputImgEl.naturalWidth;
-		$("#scale").text(scale);
+		$("#scale").text(scale+'---'+scaleMatrix);
 		var _img = null;
 		var imgElement = document.getElementById('inputImg');
 		var _img = new fabric.Image(imgElement, {
@@ -103,7 +112,7 @@
           	var _y = results[0].landmarks.positions[i]._y;
           	
           	if(i>= 17 && i<=26){
-          		_y += 7/scale;
+          		_y += 7/(scale/scaleMatrix);
           	}
 //-----------------------------------EYE DATA 2--------------------------
           	if(i == 22){
@@ -264,37 +273,56 @@
       }
     }
 
-	function clearRects(data, width) {
-      for (var i = 0; i < data.length; i+= step) {
-        data[i] = 255; // Invert Red
-        data[i+1] = 0; // Invert Green
+// 16 = 1*4 + w*4
+// 32 = h*4 + h*3*4
+
+	function clearRects(data, t, l , w, h) {
+      //for (var i = 0; i < data.length; i+= step) {
+        //0,0
+      i = 0*4;
+        data[i] = 0; // Invert Red
+        data[i+1] = 255; // Invert Green
         data[i+2] = 0; // Invert Blue
         data[i+3] = opa;
-      }
+      //}
+
+      //0,w
+      i = (w-1)*4;
+        data[i] = 0; // Invert Red
+        data[i+1] = 255; // Invert Green
+        data[i+2] = 0; // Invert Blue
+        data[i+3] = opa;
+      //h,0
+      i = (h-1)*w*4;
+        data[i] = 0; // Invert Red
+        data[i+1] = 255; // Invert Green
+        data[i+2] = 0; // Invert Blue
+        data[i+3] = opa;
+      //h,w
+      i = (w-1)*4 + (h-1)*w*4;
+        data[i] = 0; // Invert Red
+        data[i+1] = 255; // Invert Green
+        data[i+2] = 0; // Invert Blue
+        data[i+3] = opa;
     }
 
-    function checkColors(data, _t, _l, y, x) {
-    	point = parseInt((y-_t)*(x-_l)*4);
-        data[point] = 255; // Invert Red
-        data[point+1] = 0; // Invert Green
-        data[point+2] = 0; // Invert Blue
-        data[point+3] = opa;
-        console.log(point);
-        
+    function checkColors(data, _t, _l, y, x, w, h) {
+    	point = (x-_l-1)*4 + (y-_t-1)*w*4;
+        //data[point] = 255; // Invert Red
+        //data[point+1] = 0; // Invert Green
+        //data[point+2] = 0; // Invert Blue
+        //data[point+3] = opa;
+        //console.log(point);
+        return "#" + ("000000" + rgbToHex(data[point], data[point+1], data[point+2])).slice(-6);
     }
 
     async function run() {
       // load face detection and face landmark models
       await changeFaceDetector(SSD_MOBILENETV1)
       await faceapi.loadFaceLandmarkModel('/')
-
-      // start processing image
-      //updateResults()
     }
 
     $(document).ready(function() {
-      //initImageSelectionControls()
-      //initFaceDetectionControls()
       run()
     })
 
@@ -322,25 +350,63 @@
 
 	function getListColor(list){
 		var rect = findRectEye(list);
-		
+		var tmpcolor1 = [];
+    var tmpcolor2 = [];
 		var ctx=kanvas.contextContainer.canvas.getContext('2d');
-	    var imageData = ctx.getImageData(rect[1]*scale, rect[0]*scale, (rect[3] - rect[1])*scale, (rect[2] - rect[0])*scale); 
+      t_crop = parseInt((rect[0]-2)*scale);
+      l_crop = parseInt((rect[1]-2)*scale);
+      w_crop = parseInt((rect[3] - rect[1] + 2)*scale);
+      h_crop = parseInt((rect[2] - rect[0] + 2)*scale);
+	    var imageData = ctx.getImageData(l_crop+3, t_crop+3, w_crop, h_crop); 
 	    setTimeout(function(){
 	    	kanvas.add(new fabric.Circle({ radius: 2, fill: '#f00', top: rect[0]*scale, left: rect[1]*scale }).set('hasControls', false));
 	    	kanvas.add(new fabric.Circle({ radius: 2, fill: '#f00', top: rect[2]*scale, left: rect[3]*scale}).set('hasControls', false));
 	    	for (var i = 0; i < list.length; i++) {
-		 		kanvas.add(new fabric.Circle({ radius: 2, fill: '#00f', top: list[i].y*scale, left: list[i].x*scale}).set('hasControls', false));
-		 	}
-	    	//clearRects(imageData.data, 0);
+		 		 //kanvas.add(new fabric.Circle({ radius: 2, fill: '#00f', top: list[i].y*scale, left: list[i].x*scale}).set('hasControls', false));
+		 	  }
+	      //clearRects(imageData.data, 0, 0, w_crop, h_crop);
 	    },500);
 	    setTimeout(function(){
-	    	checkColors(imageData.data, rect[0]*scale, rect[1]*scale, list[1].y*scale, list[1].x*scale);
-	    	checkColors(imageData.data, rect[0]*scale, rect[1]*scale, list[4].y*scale, list[4].x*scale);
-	    	checkColors(imageData.data, rect[0]*scale, rect[1]*scale, list[7].y*scale, list[7].x*scale);
-	    	checkColors(imageData.data, rect[0]*scale, rect[1]*scale, list[10].y*scale, list[10].x*scale);
-	    	checkColors(imageData.data, rect[0]*scale, rect[1]*scale, list[13].y*scale, list[13].x*scale);
+        
+
+        for (var i = 2; i < list.length-1; i+=3) {
+	    	  var colorx = checkColors(imageData.data, t_crop, l_crop, parseInt(list[i].y*scale), parseInt(list[i].x*scale), w_crop, h_crop);
+          tmpcolor1.push(colorx);
+        }
+        for (var i = 3; i < list.length-1; i+=3) {
+          var colorx = checkColors(imageData.data, t_crop, l_crop, parseInt(list[i].y*scale), parseInt(list[i].x*scale), w_crop, h_crop);
+          tmpcolor2.push(colorx);
+        }
+        
+        for (var i = 1; i < list.length-1; i+=3) {
+          var circle = new fabric.Circle({id: 'o'+i, radius: 10, top: list[i].y*scale, left: list[i].x*scale});
+          circle.set('hasControls', false);
+          kanvas.add(circle);
+        }
+
+        
+
 	    },1000);
 	    setTimeout(function(){
+        var j = 0;
+        for (var i = 1; i < list.length-1; i+=3) {
+          for (var x = 0; x < kanvas._objects.length; x++) {
+            if(kanvas._objects[x].id != undefined && kanvas._objects[x].id =='o'+i){
+              kanvas._objects[x].setGradient('fill', {
+                                                      x1: 20,
+                                                      y1: 0,
+                                                      x2: 20,
+                                                      y2: 20,
+                                                      colorStops: {
+                                                        0: tmpcolor1[j],
+                                                        1: tmpcolor2[j]
+                                                      }
+                                                    });
+              j++;
+            }
+          }
+        }
+        kanvas.renderAll();
 	    	kanvas.contextContainer.putImageData(imageData, 0, 0);
 		    var bs64 = kanvas.contextContainer.canvas.toDataURL();
 		    $('#inputImg2').attr('src', bs64);
