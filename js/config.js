@@ -1,5 +1,8 @@
 let withBoxes = true
 var kanvas = null;
+var tempas = null;
+var tempimg = null;
+var tmpImgEl = null;
 var scale = 1;
 var scaleMatrix = 1;
 var boundeye = [
@@ -22,11 +25,22 @@ var is_grid = false;
 var screenW = $( window ).width();
 var screenH = $( window ).height();
 
+var is_eyeshow = -1;
+
+var xClick = 0;
+var yClick = 0
+
+var active_color = null;
 $( document ).ready(function(){
   kanvas = new fabric.Canvas('canvas');
+  tempas = new fabric.Canvas('temp');
   $("#overlay").width(screenW-5).height(screenH-10);
   kanvas.setHeight(screenH-10);
   kanvas.setWidth(screenW-5);
+  tempas.setHeight(20);
+  tempas.setWidth(20);
+  tmpImgEl = $('#tempImg').get(0);
+
   for (var i = 0; i < eyeresource.length; i++) {
     $('#eye_resource').append(
       '<a class="btn-floating btn-medium waves-effect waves-light purple lighten-3">'+
@@ -34,6 +48,22 @@ $( document ).ready(function(){
     );
     
   }
+
+  kanvas.on('mouse:move', function(o){
+    $("#xtrack").text(parseInt(o.e.layerX));
+    $("#ytrack").text(parseInt(o.e.layerY));
+  });
+
+  kanvas.on('mouse:down', function(o){
+    xClick = parseInt(o.e.layerX);
+    yClick = parseInt(o.e.layerY);
+    var activeObj = o.target;
+    if(activeObj != undefined)
+      activeObj.set({'borderColor':'#3498DB','cornerColor':'#1F618D'});
+
+    processDown();
+  });
+
   run();
 })
 

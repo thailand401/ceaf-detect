@@ -39,6 +39,7 @@ async function updateResults() {
   kanvas.add(_img);
 
   setTimeout(function(){
+    return;
     eyeClear = [], eyeClear2 = [];
     for (var i = 0; i < results[0].landmarks.positions.length; i++) {
       var _x = results[0].landmarks.positions[i]._x;
@@ -153,15 +154,6 @@ async function updateResults() {
     getListColor(eyeClear);
     //-------------------
     kanvas.sendBackwards(_img);
-
-    kanvas.on('mouse:move', function(o){
-      $("#xtrack").text(parseInt(o.e.layerX));
-      $("#ytrack").text(parseInt(o.e.layerY));
-    })
-    kanvas.on('mouse:down', function(o){
-      var activeObj = o.target;
-      activeObj.set({'borderColor':'#3498DB','cornerColor':'#1F618D'});
-    });
   }, 500);
   //if (withBoxes) {
     //faceapi.draw.drawDetections(canvas, resizedResults)
@@ -256,10 +248,10 @@ function invertColors(data, width) {
     	return range;
     }
 
-    function rgbToHex(r, g, b) {
-	    if (r > 255 || g > 255 || b > 255)
-	        throw "Invalid color component";
-	    return ((r << 16) | (g << 8) | b).toString(16);
+  function rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255)
+        throw "Invalid color component";
+    return ((r << 16) | (g << 8) | b).toString(16);
 	}
 
 //-------------------------------------------------------------------------
@@ -364,4 +356,66 @@ function getListColor(list){
     $('#inputImg2').attr('src', bs64);
 
   },1500);
+}
+
+function getDotColor(){
+  var ctx=kanvas.contextContainer.canvas.getContext('2d');
+  var imageData = ctx.getImageData(xClick, yClick, 1, 1).data;
+  $(active_color).attr('style','background-color : #'+rgbToHex(imageData[0], imageData[1], imageData[2])+' !important');
+  $(active_color).attr('color', '#'+rgbToHex(imageData[0], imageData[1], imageData[2]));
+  console.log('#'+rgbToHex(imageData[0], imageData[1], imageData[2])+' !important');
+}
+
+function blurEye(){
+  var blur_size = 20;
+  var ctx = tempas.contextContainer.canvas.getContext('2d');
+  tempas.clear();
+  tempas.add(new fabric.Circle({ radius: blur_size/2, fill: $(active_color).attr('color'), top: 0, left: 0 }));
+  var imageData = ctx.getImageData(0, 0, blur_size, blur_size);
+
+  blurProcess(imageData.data, blur_size);
+
+  tempas.clear();
+  tempas.contextContainer.putImageData(imageData, 0, 0);
+  var bs64 = tempas.contextContainer.canvas.toDataURL();
+  $('#tempImg').attr('src', bs64);
+
+  var _tmpimgObj = new fabric.Image(tmpImgEl, {
+    width: 20,
+    height: 20,
+    left: xClick - blur_size/2,
+    top: yClick - blur_size/2,
+    selectable: false
+  });
+
+  _tmpimgObj.clone(function(clone) {
+    kanvas.add(clone.set('hasControls', false));
+  });
+}
+
+function blurProcess(data, size){
+  var list_point = [];
+  var opa = 25;
+  for (var h = 0; h < size; h++) {
+    list_point = [];
+    for (var w = 0; w < size; w++) {
+      var p = w*4 + h*size*4;
+      
+      if(data[p] == 0 && data[p+1] == 0 && data[p+2] == 0){
+        data[p+3] = 0;  
+      } else {
+        list_point.push(p);
+      }
+      
+    }
+    for (var i = 0; i < list_point.length/2; i++) {
+      p = list_point[i];
+      data[p+3] = (i+1)*opa;
+    }
+    var j = parseInt(list_point.length/2);
+    for (var i = j+1; i < list_point.length; i++) {
+      p = list_point[i];
+      data[p+3] = (i-1)*opa;
+    }
+  }
 }
