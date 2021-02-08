@@ -41,7 +41,7 @@
         <div class="switch">
           <label>
             Grid
-            <input id="grid_show" type="checkbox">
+            <input id="grid_show" type="checkbox" onchange="gridshow(this);">
             <span class="lever"></span>
           </label>
         </div>

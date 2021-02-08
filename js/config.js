@@ -26,11 +26,15 @@ var screenW = $( window ).width();
 var screenH = $( window ).height();
 
 var is_eyeshow = -1;
+var is_gridshow = -1;
+
 
 var xClick = 0;
 var yClick = 0
 
 var active_color = null;
+var eyeclone = null;
+var eyeorigin= null;
 $( document ).ready(function(){
   kanvas = new fabric.Canvas('canvas');
   tempas = new fabric.Canvas('temp');
@@ -43,7 +47,7 @@ $( document ).ready(function(){
 
   for (var i = 0; i < eyeresource.length; i++) {
     $('#eye_resource').append(
-      '<a class="btn-floating btn-medium waves-effect waves-light purple lighten-3">'+
+      '<a onclick="selectEyeBrown('+i+')" class="btn-floating btn-medium waves-effect waves-light purple lighten-3">'+
       '<img class="material-icons" src="resource/'+eyeresource[i]+'" /></a>'
     );
     

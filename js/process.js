@@ -33,13 +33,25 @@ async function updateResults() {
     height: inputImgEl.naturalHeight*scale,
     left: 0,
     top: 0,
-    selectable: false,
-
+    selectable: true,
+    hasControls: false,
+    hasBorders: false,
+    lockMovementX: true,
+    lockMovementY: true,
   });
-  kanvas.add(_img);
+
+  var img = new Image();
+  // When the image loads, set it as background image
+  img.onload = function() {
+      var f_img = new fabric.Image(img);
+      kanvas.setBackgroundImage(f_img, null, {scaleX: scale, scaleY: scale});
+      kanvas.renderAll();
+  };
+  // Set the src of the image with the base64 string
+  img.src = inputImgEl.currentSrc;
+  //kanvas.add(_img);
 
   setTimeout(function(){
-    return;
     eyeClear = [], eyeClear2 = [];
     for (var i = 0; i < results[0].landmarks.positions.length; i++) {
       var _x = results[0].landmarks.positions[i]._x;
@@ -77,7 +89,7 @@ async function updateResults() {
         eyeClear.push({x: _x+boundeye[6].x, y: _y+boundeye[6].y});
       }
       //-----------------------------------END DATA----------------------------
-      if(i>26){
+      if(i>16 && i<27){
         kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
       }
     }
@@ -151,14 +163,9 @@ async function updateResults() {
         }));
       }
     }
-    getListColor(eyeClear);
     //-------------------
-    kanvas.sendBackwards(_img);
+    //kanvas.sendBackwards(_img);
   }, 500);
-  //if (withBoxes) {
-    //faceapi.draw.drawDetections(canvas, resizedResults)
-  //}
-  //faceapi.draw.drawFaceLandmarks(canvas, resizedResults)
 }
 
 function applyFilter(){
@@ -179,80 +186,69 @@ function invertColors(data, width) {
   }
 }
 
-// 16 = 1*4 + w*4
-// 32 = h*4 + h*3*4
+function clearRects(data, t, l , w, h) {
+  //0,0
+  i = 0*4;
+    data[i] = 0; // Invert Red
+    data[i+1] = 255; // Invert Green
+    data[i+2] = 0; // Invert Blue
+    data[i+3] = opa;
+  //0,w
+  i = (w-1)*4;
+    data[i] = 0; // Invert Red
+    data[i+1] = 255; // Invert Green
+    data[i+2] = 0; // Invert Blue
+    data[i+3] = opa;
+  //h,0
+  i = (h-1)*w*4;
+    data[i] = 0; // Invert Red
+    data[i+1] = 255; // Invert Green
+    data[i+2] = 0; // Invert Blue
+    data[i+3] = opa;
+  //h,w
+  i = (w-1)*4 + (h-1)*w*4;
+    data[i] = 0; // Invert Red
+    data[i+1] = 255; // Invert Green
+    data[i+2] = 0; // Invert Blue
+    data[i+3] = opa;
+}
 
-	function clearRects(data, t, l , w, h) {
-      //for (var i = 0; i < data.length; i+= step) {
-        //0,0
-      i = 0*4;
-        data[i] = 0; // Invert Red
-        data[i+1] = 255; // Invert Green
-        data[i+2] = 0; // Invert Blue
-        data[i+3] = opa;
-      //}
+function checkColors(data, _t, _l, y, x, w, h) {
+	point = (x-_l-1)*4 + (y-_t-1)*w*4;
+  return "#" + ("000000" + rgbToHex(data[point], data[point+1], data[point+2])).slice(-6);
+}
 
-      //0,w
-      i = (w-1)*4;
-        data[i] = 0; // Invert Red
-        data[i+1] = 255; // Invert Green
-        data[i+2] = 0; // Invert Blue
-        data[i+3] = opa;
-      //h,0
-      i = (h-1)*w*4;
-        data[i] = 0; // Invert Red
-        data[i+1] = 255; // Invert Green
-        data[i+2] = 0; // Invert Blue
-        data[i+3] = opa;
-      //h,w
-      i = (w-1)*4 + (h-1)*w*4;
-        data[i] = 0; // Invert Red
-        data[i+1] = 255; // Invert Green
-        data[i+2] = 0; // Invert Blue
-        data[i+3] = opa;
-    }
+async function run() {
+  // load face detection and face landmark models
+  await changeFaceDetector(SSD_MOBILENETV1)
+  await faceapi.loadFaceLandmarkModel('/')
+}
 
-    function checkColors(data, _t, _l, y, x, w, h) {
-    	point = (x-_l-1)*4 + (y-_t-1)*w*4;
-        //data[point] = 255; // Invert Red
-        //data[point+1] = 0; // Invert Green
-        //data[point+2] = 0; // Invert Blue
-        //data[point+3] = opa;
-        //console.log(point);
-        return "#" + ("000000" + rgbToHex(data[point], data[point+1], data[point+2])).slice(-6);
-    }
+$(document).ready(function() {
+  run()
+})
 
-    async function run() {
-      // load face detection and face landmark models
-      await changeFaceDetector(SSD_MOBILENETV1)
-      await faceapi.loadFaceLandmarkModel('/')
-    }
-
-    $(document).ready(function() {
-      run()
-    })
-
-    function findRectEye(data){
-    	//range[ top, left, bottom, right]
-    	var range = [9999,9999,-9999,-9999];
-    	for (var i = 0; i < data.length; i++) {
-    		if(data[i].x < range[1])
-    			range[1] = data[i].x;
-    		if(data[i].x > range[3])
-    			range[3] = data[i].x;
-    		if(data[i].y < range[0])
-    			range[0] = data[i].y;
-    		if(data[i].y > range[2])
-    			range[2] = data[i].y;
-    	}
-    	return range;
-    }
-
-  function rgbToHex(r, g, b) {
-    if (r > 255 || g > 255 || b > 255)
-        throw "Invalid color component";
-    return ((r << 16) | (g << 8) | b).toString(16);
+function findRectEye(data){
+	//range[ top, left, bottom, right]
+	var range = [9999,9999,-9999,-9999];
+	for (var i = 0; i < data.length; i++) {
+		if(data[i].x < range[1])
+			range[1] = data[i].x;
+		if(data[i].x > range[3])
+			range[3] = data[i].x;
+		if(data[i].y < range[0])
+			range[0] = data[i].y;
+		if(data[i].y > range[2])
+			range[2] = data[i].y;
 	}
+	return range;
+}
+
+function rgbToHex(r, g, b) {
+  if (r > 255 || g > 255 || b > 255)
+      throw "Invalid color component";
+  return ((r << 16) | (g << 8) | b).toString(16);
+}
 
 //-------------------------------------------------------------------------
 function getListColor(list){
@@ -332,28 +328,7 @@ function getListColor(list){
     }
 
     //add eyebrown resource
-    fabric.Image.fromURL('resource/'+eyeresource[1], function(oImg) {
-      var eyescl = (list[13].x - list[1].x) / 400;
-      oImg.left = results[0].landmarks.positions[22]._x*scale + 5*scale ;
-      oImg.top = results[0].landmarks.positions[22]._y*scale - (oImg.height*eyescl) + 5*scale;
-      oImg.scale(eyescl);
-      
-      oImg.clone(function(clone) {
-          kanvas.add(clone.set({
-              left: results[0].landmarks.positions[17]._x*scale + 5*scale,
-              top: results[0].landmarks.positions[17]._y*scale - (oImg.height*eyescl) + 5*scale
-          }));
-      });
-      
-      oImg.set('flipX', true);
-      kanvas.add(oImg);
-      
-    });
     
-    kanvas.renderAll();
-  	kanvas.contextContainer.putImageData(imageData, 0, 0);
-    var bs64 = kanvas.contextContainer.canvas.toDataURL();
-    $('#inputImg2').attr('src', bs64);
 
   },1500);
 }
@@ -381,41 +356,111 @@ function blurEye(){
   $('#tempImg').attr('src', bs64);
 
   var _tmpimgObj = new fabric.Image(tmpImgEl, {
-    width: 20,
-    height: 20,
+    width: blur_size,
+    height: blur_size,
     left: xClick - blur_size/2,
     top: yClick - blur_size/2,
-    selectable: false
+    hasControls: false, hasBorders: false, selectable: false
   });
 
   _tmpimgObj.clone(function(clone) {
-    kanvas.add(clone.set('hasControls', false));
+    clone.set('hasControls', false);
+    clone.set('hasBorders', false);
+    clone.set('selectable', false);
+    //clone.scale(2);
+    kanvas.add(clone);
   });
 }
 
 function blurProcess(data, size){
   var list_point = [];
-  var opa = 25;
-  for (var h = 0; h < size; h++) {
+  var opa = 5;
+
+  for (var w = 0; w < size; w++) {
     list_point = [];
-    for (var w = 0; w < size; w++) {
+    debugopa = [];
+    for (var h = 0; h < size; h++) {
       var p = w*4 + h*size*4;
       
       if(data[p] == 0 && data[p+1] == 0 && data[p+2] == 0){
         data[p+3] = 0;  
       } else {
-        list_point.push(p);
+        list_point.push([p,w,h]);
       }
       
     }
+
+    var j = parseInt(list_point.length/2);
     for (var i = 0; i < list_point.length/2; i++) {
       p = list_point[i];
-      data[p+3] = (i+1)*opa;
+      opaindex = i+1;
+      opajust = 0;
+
+      if(p[2] < size/2 && p[2] >= (size/2)-3){
+        if(p[1] < 5 && p[1] >= 0){
+          var tmph = (size/2) - p[2];
+          tmph = (tmph>1)?0:1;
+          opajust = tmph*opa + opa;
+        }
+        if(p[1] >= 15 && p[1] < size){
+          var tmph = size - p[2];
+          tmph = (tmph>1)?0:1;
+          opajust = tmph*opa + opa;
+        }
+      }
+
+      if(is_gridshow == 1)
+        opajust = 0;
+
+      data[p[0]+3] = (opaindex)*opa - opajust;
     }
-    var j = parseInt(list_point.length/2);
-    for (var i = j+1; i < list_point.length; i++) {
+
+    for (var i = list_point.length -1 ; i > j-1; i--) {
       p = list_point[i];
-      data[p+3] = (i-1)*opa;
+      opaindex = list_point.length - i;
+      opajust = 0;
+      
+      if(p[2] >= size/2 && p[2] < (size/2)+3){
+        if(p[1] < 5 && p[1] >= 0){
+          var tmph = p[2] - (size/2-1);
+          tmph = (tmph>1)?0:1;
+          opajust = tmph*opa + opa;
+        }
+        if(p[1] >= 15 && p[1] < size){
+          var tmph = size - p[2];
+          tmph = (tmph>1)?0:1;
+          opajust = tmph*opa + opa;
+        }
+      }
+
+      if(is_gridshow == 1)
+        opajust = 0;
+
+      data[p[0]+3] = (opaindex)*opa - opajust;
     }
+  }
+}
+
+function addEyeBrown(id){
+  if(results[0] != undefined){
+    fabric.Image.fromURL('resource/'+eyeresource[id], function(oImg) {
+      var eyescl = (results[0].landmarks.positions[21].x - results[0].landmarks.positions[17].x) / 400;
+      oImg.left = results[0].landmarks.positions[22]._x*scale + 5*scale ;
+      oImg.top = results[0].landmarks.positions[22]._y*scale - (oImg.height*eyescl) + 5*scale;
+      oImg.scale(eyescl);
+      
+      oImg.clone(function(clone) {
+        eyeclone = clone;
+          kanvas.add(clone.set({
+              id: 'eye1',
+              left: results[0].landmarks.positions[17]._x*scale + 5*scale,
+              top: results[0].landmarks.positions[17]._y*scale - (oImg.height*eyescl) + 5*scale
+          }));
+      });
+      oImg.set('id', 'eye2');
+      oImg.set('flipX', true);
+      kanvas.add(oImg);
+      eyeorigin = oImg;
+    });
   }
 }
