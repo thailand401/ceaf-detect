@@ -47,7 +47,7 @@ $( document ).ready(function(){
 
   for (var i = 0; i < eyeresource.length; i++) {
     $('#eye_resource').append(
-      '<a onclick="selectEyeBrown('+i+')" class="btn-floating btn-medium waves-effect waves-light purple lighten-3">'+
+      '<a onclick="selectEyeBrown('+i+', this)" class="btn-floating btn-medium waves-effect waves-light purple lighten-3">'+
       '<img class="material-icons" src="resource/'+eyeresource[i]+'" /></a>'
     );
     
@@ -68,11 +68,13 @@ $( document ).ready(function(){
     processDown();
   });
 
+  $("#temp").parent().addClass('abs-cont');
+
   run();
 })
 
 async function run() {
   // load face detection and face landmark models
-  await changeFaceDetector(SSD_MOBILENETV1)
-  await faceapi.loadFaceLandmarkModel('/')
+  await changeFaceDetector(SSD_MOBILENETV1);
+  await faceapi.loadFaceLandmarkModel('/');
 }

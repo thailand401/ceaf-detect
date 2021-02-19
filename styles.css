@@ -166,3 +166,11 @@ canvas {
   margin-top: 2%;
   margin-left: 2%;
 }
+
+.abs-cont{
+  position: absolute !important;
+}
+
+.btn-floating.active{
+  border: 1px solid darkred;
+}

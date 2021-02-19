@@ -9,6 +9,8 @@ function gridshow(e){
 }
 
 function setColor(e){
+	$('.class-color').removeClass('active');
+	$(e).addClass('active');
 	active_color = e;
 }
 
@@ -20,7 +22,10 @@ function processDown(){
 	}
 }
 
-function selectEyeBrown(i){
+function selectEyeBrown(i,e){
+	$('#eye_resource .btn-floating').removeClass('active');
+	$(e).addClass('active');
+	
 	if(eyeclone == null){
 		addEyeBrown(i);
 	}

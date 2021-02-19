@@ -90,7 +90,7 @@ async function updateResults() {
       }
       //-----------------------------------END DATA----------------------------
       if(i>16 && i<27){
-        kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
+        //kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
       }
     }
 

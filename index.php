@@ -60,9 +60,9 @@
           </div>
         </div>
 
-        <a id="color1" class="btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
-        <a id="color2" class="btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
-        <a id="color3" class="btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
+        <a id="color1" class="class-color btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
+        <a id="color2" class="class-color btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
+        <a id="color3" class="class-color btn-floating btn-medium waves-effect waves-light grey" onclick="setColor(this)"></a>
       </div>
 
       <div id="bottom_tool">
@@ -76,7 +76,7 @@
       <img id="inputImg" src="" style="height:0px;display: none;" />
       <img id="tempImg" src="" style="height:0px;display: none;" />
     </div>
-  </body>
+  </div>
 
   <script src="js/config.js"></script>
   <script src="js/events.js"></script>
