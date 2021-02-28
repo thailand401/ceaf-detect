@@ -76,7 +76,7 @@
       <img id="inputImg" src="" style="height:0px;display: none;" />
       <img id="tempImg" src="" style="height:0px;display: none;" />
     </div>
-  </body>
+  </div>
 
   <script src="js/config.js"></script>
   <script src="js/events.js"></script>

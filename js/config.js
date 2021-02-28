@@ -68,6 +68,8 @@ $( document ).ready(function(){
     processDown();
   });
 
+  $("#temp").parent().addClass('abs-cont');
+
   run();
 })
 

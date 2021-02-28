@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Face Detection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="imageContainer" class="images">
+            <img id="myImg" class="image" src="img.png" alt="">
+        </div>
+        <canvas id="myCanvas" />
+    </div>
+    <script src="face-api.js"></script>
+    <script type="text/javascript">
+        const input = document.getElementById('myImg');
+        const rs = null;
+        async function getRS() {
+            await faceapi.nets.ssdMobilenetv1.loadFromUri('public/models');
+            await faceapi.loadFaceLandmarkModel('public/models');
+            await faceapi.loadFaceLandmarkTinyModel('public/models')
+            const rs1 = await faceapi.detectFaceLandmarks(input);
+            return rs1;
+        }
+        console.log(getRS());
+    </script>
+</body>
+
+</html>

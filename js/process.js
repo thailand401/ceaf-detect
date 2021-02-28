@@ -89,8 +89,9 @@ async function updateResults() {
         eyeClear.push({x: _x+boundeye[6].x, y: _y+boundeye[6].y});
       }
       //-----------------------------------END DATA----------------------------
+      //Show/Hide eye dot
       if(i>16 && i<27){
-        kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
+        //kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
       }
     }
 
