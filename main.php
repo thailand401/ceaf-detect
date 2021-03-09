@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="fabric2.js"></script>
-  <script src="face-api.js"></script>
+  <script src="js/fabric2.js"></script>
+  <script src="js/face-api.js"></script>
   
   <script src="js/faceDetectionControls.js"></script>
   <script src="js/imageSelectionControls.js"></script>
@@ -229,7 +229,7 @@
             var activeObj = o.target;
             activeObj.set({'borderColor':'#3498DB','cornerColor':'#1F618D'});
           });
-        }, 500);
+        }, 2500);
       //if (withBoxes) {
         //faceapi.draw.drawDetections(canvas, resizedResults)
       //}

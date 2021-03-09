@@ -5,15 +5,21 @@ var results = [];
 
 async function updateResults() {
 
+/*
   if (!isFaceDetectionModelLoaded()) {
     return
   }
-
-  const inputImgEl = $('#inputImg').get(0);
-  const options = getFaceDetectorOptions();
-  results = await faceapi.detectAllFaces(inputImgEl, options).withFaceLandmarks();
+*/
+  //const inputImgEl = $('#inputImg').get(0);
+  const inputImgEl = document.getElementById('inputImg');
+  await faceapi.nets.ssdMobilenetv1.loadFromUri('public/models');
+  await faceapi.loadFaceLandmarkModel('public/models');
+  faceapi.detectFaceLandmarks(inputImgEl).then(function(response){                               
+     setTimeout(function(){updateBoard(response)},500);
+  }); 
+  //results = rdata;
   const canvas = $('#overlay').get(0);
-  faceapi.matchDimensions(canvas, inputImgEl)
+  faceapi.matchDimensions(canvas, inputImgEl);
 
   //Calculate scale value
   if(inputImgEl.naturalWidth < 1023)
@@ -50,123 +56,124 @@ async function updateResults() {
   // Set the src of the image with the base64 string
   img.src = inputImgEl.currentSrc;
   //kanvas.add(_img);
+}
 
-  setTimeout(function(){
-    eyeClear = [], eyeClear2 = [];
-    for (var i = 0; i < results[0].landmarks.positions.length; i++) {
-      var _x = results[0].landmarks.positions[i]._x;
-      var _y = results[0].landmarks.positions[i]._y;
-      
-      if(i>= 17 && i<=26){
-        _y += 7/(scale/scaleMatrix);
-      }
-      //-----------------------------------EYE DATA 2--------------------------
-      if(i == 22){
-        eyeClear2.push({x: _x+(-1*boundeye[6].x), y: _y+boundeye[6].y});
-      }
-
-      if(i >= 22 && i <= 26){
-        eyeClear2.push({x: _x, y: _y});
-        eyeClear2.push({x: _x+(-1*boundeye[6-(i-21)].x), y: _y+boundeye[6-(i-21)].y});
-        eyeClear2.push({x: _x+boundeye[6-(i-21)].x, y: _y+(-1*boundeye[6-(i-21)].y)});
-      }
-
-      if(i == 26){
-        eyeClear2.push({x: _x+(-1*boundeye[0].x), y: _y+boundeye[0].y});
-      }
-      //-----------------------------------EYE DATA 1--------------------------
-      if(i == 17){
-        eyeClear.push({x: _x+boundeye[0].x, y: _y+boundeye[0].y});
-      }
-
-      if(i >= 17 && i <= 21){
-        eyeClear.push({x: _x, y: _y});
-        eyeClear.push({x: _x+boundeye[i-16].x, y: _y+boundeye[i-16].y});
-        eyeClear.push({x: _x+(-1*boundeye[i-16].x), y: _y+(-1*boundeye[i-16].y)});
-      }
-
-      if(i == 21){
-        eyeClear.push({x: _x+boundeye[6].x, y: _y+boundeye[6].y});
-      }
-      //-----------------------------------END DATA----------------------------
-      //Show/Hide eye dot
-      if(i>16 && i<27){
-        //kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
-      }
+function updateBoard(rs){
+  results = rs;
+  eyeClear = [], eyeClear2 = [];
+  for (var i = 0; i < results.positions.length; i++) {
+    var _x = results.positions[i]._x;
+    var _y = results.positions[i]._y;
+    
+    if(i>= 17 && i<=26){
+      _y += 7/(scale/scaleMatrix);
+    }
+    //-----------------------------------EYE DATA 2--------------------------
+    if(i == 22){
+      eyeClear2.push({x: _x+(-1*boundeye[6].x), y: _y+boundeye[6].y});
     }
 
-    if(is_grid == true){
-      kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[1].x*scale, eyeClear[1].y*scale], { 
-          stroke: 'green' 
-      }));
-      kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[1].x*scale, eyeClear2[1].y*scale], { 
-          stroke: 'green' 
-      }));
-
-      for (var i = 1; i < eyeClear.length-1; i+=3) {
-        j = i+3;
-        j = (j>eyeClear.length-1)?eyeClear.length-1:j;
-        kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
-            stroke: 'green' 
-        }));
-        kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
-            stroke: 'green' 
-        }));
-      }
-      //------------------
-      kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[2].x*scale, eyeClear[2].y*scale], { 
-          stroke: 'green' 
-      }));
-      kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[2].x*scale, eyeClear2[2].y*scale], { 
-          stroke: 'green' 
-      }));
-      for (var i = 2; i < eyeClear.length-1; i+=3) {
-        j = i+3;
-        j = (j>eyeClear.length-1)?eyeClear.length-1:j;
-        kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
-            stroke: 'green' 
-        }));
-        kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
-            stroke: 'green' 
-        }));
-      }
-      //------------------
-      kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[3].x*scale, eyeClear[3].y*scale], { 
-          stroke: 'green' 
-      }));
-      kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[3].x*scale, eyeClear2[3].y*scale], { 
-          stroke: 'green' 
-      }));
-      for (var i = 3; i < eyeClear.length-1; i+=3) {
-        j = i+3;
-        j = (j>eyeClear.length-1)?eyeClear.length-1:j;
-        kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
-            stroke: 'green' 
-        }));
-        kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
-            stroke: 'green' 
-        }));
-      }
-
-      for (var i = 1; i < eyeClear.length-1; i+=3) {
-        kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[i+1].x*scale, eyeClear[i+1].y*scale], { 
-            stroke: 'green' 
-        }));
-        kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[i+2].x*scale, eyeClear[i+2].y*scale], { 
-            stroke: 'green' 
-        }));
-
-        kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[i+1].x*scale, eyeClear2[i+1].y*scale], { 
-            stroke: 'green' 
-        }));
-        kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[i+2].x*scale, eyeClear2[i+2].y*scale], { 
-            stroke: 'green' 
-        }));
-      }
+    if(i >= 22 && i <= 26){
+      eyeClear2.push({x: _x, y: _y});
+      eyeClear2.push({x: _x+(-1*boundeye[6-(i-21)].x), y: _y+boundeye[6-(i-21)].y});
+      eyeClear2.push({x: _x+boundeye[6-(i-21)].x, y: _y+(-1*boundeye[6-(i-21)].y)});
     }
-    //-------------------
-    //kanvas.sendBackwards(_img);
-  }, 500);
+
+    if(i == 26){
+      eyeClear2.push({x: _x+(-1*boundeye[0].x), y: _y+boundeye[0].y});
+    }
+    //-----------------------------------EYE DATA 1--------------------------
+    if(i == 17){
+      eyeClear.push({x: _x+boundeye[0].x, y: _y+boundeye[0].y});
+    }
+
+    if(i >= 17 && i <= 21){
+      eyeClear.push({x: _x, y: _y});
+      eyeClear.push({x: _x+boundeye[i-16].x, y: _y+boundeye[i-16].y});
+      eyeClear.push({x: _x+(-1*boundeye[i-16].x), y: _y+(-1*boundeye[i-16].y)});
+    }
+
+    if(i == 21){
+      eyeClear.push({x: _x+boundeye[6].x, y: _y+boundeye[6].y});
+    }
+    //-----------------------------------END DATA----------------------------
+    //Show/Hide eye dot
+    if(i>16 && i<27){
+      //kanvas.add(new fabric.Circle({ radius: 2, fill: '#f0f', top: _y*scale, left: _x*scale }).set('hasControls', false));
+    }
+  }
+
+  if(is_grid == true){
+    kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[1].x*scale, eyeClear[1].y*scale], { 
+        stroke: 'green' 
+    }));
+    kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[1].x*scale, eyeClear2[1].y*scale], { 
+        stroke: 'green' 
+    }));
+
+    for (var i = 1; i < eyeClear.length-1; i+=3) {
+      j = i+3;
+      j = (j>eyeClear.length-1)?eyeClear.length-1:j;
+      kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
+          stroke: 'green' 
+      }));
+      kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
+          stroke: 'green' 
+      }));
+    }
+    //------------------
+    kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[2].x*scale, eyeClear[2].y*scale], { 
+        stroke: 'green' 
+    }));
+    kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[2].x*scale, eyeClear2[2].y*scale], { 
+        stroke: 'green' 
+    }));
+    for (var i = 2; i < eyeClear.length-1; i+=3) {
+      j = i+3;
+      j = (j>eyeClear.length-1)?eyeClear.length-1:j;
+      kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
+          stroke: 'green' 
+      }));
+      kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
+          stroke: 'green' 
+      }));
+    }
+    //------------------
+    kanvas.add(new fabric.Line([eyeClear[0].x*scale, eyeClear[0].y*scale, eyeClear[3].x*scale, eyeClear[3].y*scale], { 
+        stroke: 'green' 
+    }));
+    kanvas.add(new fabric.Line([eyeClear2[0].x*scale, eyeClear2[0].y*scale, eyeClear2[3].x*scale, eyeClear2[3].y*scale], { 
+        stroke: 'green' 
+    }));
+    for (var i = 3; i < eyeClear.length-1; i+=3) {
+      j = i+3;
+      j = (j>eyeClear.length-1)?eyeClear.length-1:j;
+      kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[j].x*scale, eyeClear[j].y*scale], { 
+          stroke: 'green' 
+      }));
+      kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[j].x*scale, eyeClear2[j].y*scale], { 
+          stroke: 'green' 
+      }));
+    }
+
+    for (var i = 1; i < eyeClear.length-1; i+=3) {
+      kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[i+1].x*scale, eyeClear[i+1].y*scale], { 
+          stroke: 'green' 
+      }));
+      kanvas.add(new fabric.Line([eyeClear[i].x*scale, eyeClear[i].y*scale, eyeClear[i+2].x*scale, eyeClear[i+2].y*scale], { 
+          stroke: 'green' 
+      }));
+
+      kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[i+1].x*scale, eyeClear2[i+1].y*scale], { 
+          stroke: 'green' 
+      }));
+      kanvas.add(new fabric.Line([eyeClear2[i].x*scale, eyeClear2[i].y*scale, eyeClear2[i+2].x*scale, eyeClear2[i+2].y*scale], { 
+          stroke: 'green' 
+      }));
+    }
+  }
+  //-------------------
+  //kanvas.sendBackwards(_img);
 }
 
 function applyFilter(){
@@ -218,16 +225,6 @@ function checkColors(data, _t, _l, y, x, w, h) {
 	point = (x-_l-1)*4 + (y-_t-1)*w*4;
   return "#" + ("000000" + rgbToHex(data[point], data[point+1], data[point+2])).slice(-6);
 }
-
-async function run() {
-  // load face detection and face landmark models
-  await changeFaceDetector(SSD_MOBILENETV1)
-  await faceapi.loadFaceLandmarkModel('/')
-}
-
-$(document).ready(function() {
-  run()
-})
 
 function findRectEye(data){
 	//range[ top, left, bottom, right]
@@ -443,19 +440,19 @@ function blurProcess(data, size){
 }
 
 function addEyeBrown(id){
-  if(results[0] != undefined){
+  if(results != undefined){
     fabric.Image.fromURL('resource/'+eyeresource[id], function(oImg) {
-      var eyescl = (results[0].landmarks.positions[21].x - results[0].landmarks.positions[17].x) / 400;
-      oImg.left = results[0].landmarks.positions[22]._x*scale + 5*scale ;
-      oImg.top = results[0].landmarks.positions[22]._y*scale - (oImg.height*eyescl) + 5*scale;
+      var eyescl = (results.positions[21].x - results.positions[17].x) / 400;
+      oImg.left = results.positions[22]._x*scale + 5*scale ;
+      oImg.top = results.positions[22]._y*scale - (oImg.height*eyescl) + 5*scale;
       oImg.scale(eyescl);
       
       oImg.clone(function(clone) {
         eyeclone = clone;
           kanvas.add(clone.set({
               id: 'eye1',
-              left: results[0].landmarks.positions[17]._x*scale + 5*scale,
-              top: results[0].landmarks.positions[17]._y*scale - (oImg.height*eyescl) + 5*scale
+              left: results.positions[17]._x*scale + 5*scale,
+              top: results.positions[17]._y*scale - (oImg.height*eyescl) + 5*scale
           }));
       });
       oImg.set('id', 'eye2');
@@ -464,4 +461,12 @@ function addEyeBrown(id){
       eyeorigin = oImg;
     });
   }
+}
+
+async function run() {
+  await faceapi.nets.ssdMobilenetv1.loadFromUri('public/models');
+  await faceapi.loadFaceLandmarkModel('public/models');
+  await faceapi.loadFaceLandmarkTinyModel('public/models');
+  console.log('Load Models success!');
+  updateResults();
 }

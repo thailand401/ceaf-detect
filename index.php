@@ -3,7 +3,6 @@
 <head>
   <script src="js/fabric2.js"></script>
   <script src="js/face-api.js"></script>
-  <script src="js/faceDetectionControls.js"></script>
   <script src="js/imageSelectionControls.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="materialize.css">
@@ -73,7 +72,7 @@
         </div>
       </div>
 
-      <img id="inputImg" src="" style="height:0px;display: none;" />
+      <img id="inputImg" src="Selection_162.png" style="height:0px;" />
       <img id="tempImg" src="" style="height:0px;display: none;" />
     </div>
   </div>

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="fabric.js"></script>
+    <script src="js/fabric.js"></script>
 </head>
 
 <body>
